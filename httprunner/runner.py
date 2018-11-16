@@ -164,6 +164,7 @@ class Runner(object):
         # prepare
         extractors = teststep_dict.get("extract", []) or teststep_dict.get("extractors", [])
         validators = teststep_dict.get("validate", []) or teststep_dict.get("validators", [])
+        dbvalidators = teststep_dict.get("dbvalidate", []) or teststep_dict.get("dbvalidas", [])
         parsed_request = self.init_test(teststep_dict, level="teststep")
         self.context.update_teststep_variables_mapping("request", parsed_request)
 
@@ -227,7 +228,28 @@ class Runner(object):
             err_resp_msg += "headers: {}\n".format(resp_obj.headers)
             err_resp_msg += "body: {}\n".format(repr(resp_obj.text))
             logger.log_error(err_resp_msg)
+            raise
 
+        # dbvalidte
+        try:
+            self.evaluated_dbvalidators = self.context.dbvalidate(dbvalidators)
+        except (exceptions.ParamsError,
+                exceptions.DbValidationFailure,
+                exceptions.ValidationFailure,
+                exceptions.ExtractFailure):
+            # log request
+            err_req_msg = "request: \n"
+            err_req_msg += "headers: {}\n".format(parsed_request.pop("headers", {}))
+            for k, v in parsed_request.items():
+                err_req_msg += "{}: {}\n".format(k, repr(v))
+            logger.log_error(err_req_msg)
+
+            # log response
+            err_resp_msg = "response: \n"
+            err_resp_msg += "status_code: {}\n".format(resp_obj.status_code)
+            err_resp_msg += "headers: {}\n".format(resp_obj.headers)
+            err_resp_msg += "body: {}\n".format(repr(resp_obj.text))
+            logger.log_error(err_resp_msg)
             raise
 
     def extract_output(self, output_variables_list):

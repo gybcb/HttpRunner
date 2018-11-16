@@ -199,6 +199,29 @@ def parse_validator(validator):
         "comparator": comparator
     }
 
+def parse_dbvalidator(dbvalidator):
+    """ 解析 dbvalidator
+    @param dbvalidator
+    {"eq": ["tablename", {"filter_fieldname": "filter_fieldvalue"}, {"validate_fieldname": "validate_fieldvalue"}]}
+    @return (dict) validator info
+    {
+    "function": "eq",
+    "params": ["tablename", {"filter_fieldname": "filter_fieldvalue"}, {"validate_fieldname": "validate_fieldvalue"}],
+    }
+    """
+    if not isinstance(dbvalidator, dict):
+        raise exceptions.ParamsError("invalid dbvalidator: {}".format(dbvalidator))
+
+    if len(dbvalidator) == 1:
+        function = list(dbvalidator.keys())[0]
+        params = dbvalidator[function]
+
+        if not isinstance(params, list) or len(params) < 1:
+            raise exceptions.ParamsError("invalid dbvalidator: {}".format(dbvalidator))
+    return {
+        "function": function,
+        "params": params
+    }
 
 def substitute_variables(content, variables_mapping):
     """ substitute variables in content with variables_mapping

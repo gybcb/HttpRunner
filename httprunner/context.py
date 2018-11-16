@@ -254,3 +254,48 @@ class Context(object):
             raise exceptions.ValidationFailure(failures_string)
 
         return evaluated_validators
+
+    def _do_dbvalidation(self, dbvalidator):
+        func = parser.get_mapping_function("dbvalidator", self.TESTCASE_SHARED_FUNCTIONS_MAPPING)
+
+        dbvalidate_msg = "dbvalidate: {}".format(dbvalidator)
+
+        kwargs = dbvalidator
+        try:
+            func(**kwargs)
+            dbvalidate_msg += "\t==> pass"
+            logger.log_debug(dbvalidate_msg)
+        except (AssertionError, TypeError):
+            dbvalidate_msg += "\t==> fail"
+            logger.log_error(dbvalidate_msg)
+            raise exceptions.DbValidationFailure(dbvalidate_msg)
+
+    def dbvalidate(self, dbvalidators):
+        """ validate datebase item
+        """
+
+        evaluated_dbvalidators = []
+        if not dbvalidators:
+            return evaluated_dbvalidators
+
+        logger.log_info("start to dbvalidate.")
+        dbvalidate_pass = True
+        failures = []
+
+        for dbvalidator in dbvalidators:
+            # evaluate dbvalidators with context variable mapping.
+            evaluated_dbvalidator = self.eval_content(
+                parser.parse_dbvalidator(dbvalidator)
+            )
+
+            try:
+                self._do_dbvalidation(evaluated_dbvalidator)
+            except exceptions.DbValidationFailure as ex:
+                dbvalidate_pass = False
+                failures.append(str(ex))
+
+            evaluated_dbvalidators.append(evaluated_dbvalidator)
+
+            if not dbvalidate_pass:
+                failures_string = "\n".join([failure for failure in failures])
+                raise exceptions.DbValidationFailure(failures_string)

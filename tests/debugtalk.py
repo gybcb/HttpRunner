@@ -100,3 +100,8 @@ def alter_response(response):
 def alter_response_error(response):
     # NameError
     not_defined_variable
+
+def dbvalidator(**kwargs):
+    print(len(kwargs))
+
+    print(kwargs)

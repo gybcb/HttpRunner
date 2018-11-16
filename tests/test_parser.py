@@ -453,3 +453,18 @@ class TestParser(unittest.TestCase):
         )
         self.assertIsInstance(parsed_testcases, list)
         self.assertEqual(parsed_testcases[0]["config"]["name"], '12311')
+
+
+    def test_parse_dbvalidator(self):
+        dbvalidator = {"eq": ["tablename", {"fieldname1": "fieldvalue1"}, {"fieldname2": "fieldvalue2"}]}
+        self.assertEqual(
+            parser.parse_dbvalidator(dbvalidator),
+            {
+                "function": "eq",
+                "params": [
+                    "tablename",
+                    {"fieldname1": "fieldvalue1"},
+                    {"fieldname2": "fieldvalue2"}
+                ]
+            }
+        )

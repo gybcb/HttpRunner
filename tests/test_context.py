@@ -5,7 +5,6 @@ import requests
 from httprunner import context, exceptions, loader, response
 from tests.base import ApiServerUnittest
 
-
 class TestContext(ApiServerUnittest):
 
     def setUp(self):
@@ -203,3 +202,18 @@ class TestContext(ApiServerUnittest):
 
         with self.assertRaises(exceptions.ValidationFailure):
             self.context.validate(validators, resp_obj)
+
+    def test_dbvalidate(self):
+        dbvalidators = [
+            {"eq": ["$tablename", {"filter_fieldname": "$filter_fieldvalue"}, {"valide_fielddname": "$valide_fieldvalue"}]},
+            {"sum": ["$tablename", {"filter_fieldname": "$filter_fieldvalue"}, "sum_fieldname"]}
+        ]
+
+        variables = [
+            {"tablename": "mytablename"},
+            {"filter_fieldvalue": 200},
+            {"valide_fieldvalue": 400}
+        ]
+
+        self.context.update_context_variables(variables, "teststep")
+        self.context.dbvalidate(dbvalidators)

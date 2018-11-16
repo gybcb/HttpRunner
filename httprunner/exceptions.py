@@ -12,6 +12,9 @@ class MyBaseFailure(Exception):
 class ValidationFailure(MyBaseFailure):
     pass
 
+class DbValidationFailure(MyBaseFailure):
+    pass
+
 class ExtractFailure(MyBaseFailure):
     pass
 
