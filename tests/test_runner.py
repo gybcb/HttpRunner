@@ -272,3 +272,31 @@ class TestRunner(ApiServerUnittest):
             ]
         }
         self.test_runner.run_test(test)
+
+    def test_run_dbvalidate(self):
+        test = {
+            "name": "/api/get-token",
+            "request": {
+                "url": "http://127.0.0.1:5000/api/get-token",
+                "headers": {
+                    "device_sn": "FwgRiO7CNA50DSU",
+                    "user_agent": "iOS/10.3",
+                    "os_platform": "ios",
+                    "app_version": "2.8.6",
+                    "Content-Type": "application/json"
+                },
+                "method": "POST",
+                "json": {"sign": "958a05393efef0ac7c0fb80a7eac45e24fd40c27"}
+            },
+            "variables": {
+                "v1": 272502
+            },
+            "validate": [
+                {"eq": ["status_code", 200]}
+            ],
+            "dbvalidate": [
+                {"eq": ["act_ge_bytearray", {"id_": "272533"}, {"name_": "hist.var-multiInstanceCompletionUsers"}]}
+            ]
+        }
+
+        self.test_runner.run_test(test)

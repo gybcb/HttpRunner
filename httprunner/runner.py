@@ -164,7 +164,7 @@ class Runner(object):
         # prepare
         extractors = teststep_dict.get("extract", []) or teststep_dict.get("extractors", [])
         validators = teststep_dict.get("validate", []) or teststep_dict.get("validators", [])
-        dbvalidators = teststep_dict.get("dbvalidate", []) or teststep_dict.get("dbvalidas", [])
+        dbvalidators = teststep_dict.get("dbvalidate", []) or teststep_dict.get("dbvalidators", [])
         parsed_request = self.init_test(teststep_dict, level="teststep")
         self.context.update_teststep_variables_mapping("request", parsed_request)
 

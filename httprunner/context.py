@@ -256,7 +256,7 @@ class Context(object):
         return evaluated_validators
 
     def _do_dbvalidation(self, dbvalidator):
-        func = parser.get_mapping_function("dbvalidator", self.TESTCASE_SHARED_FUNCTIONS_MAPPING)
+        func = parser.get_mapping_function("dbvalidate", self.TESTCASE_SHARED_FUNCTIONS_MAPPING)
 
         dbvalidate_msg = "dbvalidate: {}".format(dbvalidator)
 
@@ -265,9 +265,10 @@ class Context(object):
             func(**kwargs)
             dbvalidate_msg += "\t==> pass"
             logger.log_debug(dbvalidate_msg)
-        except (AssertionError, TypeError):
+        except (AssertionError, TypeError) as err:
             dbvalidate_msg += "\t==> fail"
             logger.log_error(dbvalidate_msg)
+            logger.log_error(" ".join(err.args))
             raise exceptions.DbValidationFailure(dbvalidate_msg)
 
     def dbvalidate(self, dbvalidators):

@@ -101,7 +101,7 @@ def alter_response_error(response):
     # NameError
     not_defined_variable
 
-def dbvalidator(**kwargs):
+def dbvalidate(**kwargs):
     print(len(kwargs))
 
     print(kwargs)
