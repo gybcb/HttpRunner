@@ -456,15 +456,36 @@ class TestParser(unittest.TestCase):
 
 
     def test_parse_dbvalidator(self):
-        dbvalidator = {"eq": ["tablename", {"fieldname1": "fieldvalue1"}, {"fieldname2": "fieldvalue2"}]}
+        dbvalidator = {"eq": ["newcore", "dbname", ["tablename"], {"fieldname1": "fieldvalue1"}, {"fieldname2": "fieldvalue2"}]}
         self.assertEqual(
             parser.parse_dbvalidator(dbvalidator),
             {
+                "env": "newcore",
+                "dbname": "dbname",
                 "function": "eq",
                 "params": [
-                    "tablename",
+                    ["tablename"],
                     {"fieldname1": "fieldvalue1"},
                     {"fieldname2": "fieldvalue2"}
+                ]
+            }
+        )
+
+        dbvalidator = {"eq": ["newcore", "dbname", ["t1", "t2"],
+                              {"t1.f1": "t2.f1", "t1.f2": "v2"},
+                              {"t1.f3": "v3"}
+        ]}
+
+        self.assertEqual(
+            parser.parse_dbvalidator(dbvalidator),
+            {
+                "env": "newcore",
+                "dbname": "dbname",
+                "function": "eq",
+                "params": [
+                    ["t1", "t2"],
+                    {"t1.f1": "t2.f1", "t1.f2": "v2"},
+                    {"t1.f3": "v3"}
                 ]
             }
         )

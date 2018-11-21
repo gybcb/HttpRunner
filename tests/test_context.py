@@ -4,6 +4,8 @@ import time
 import requests
 from httprunner import context, exceptions, loader, response
 from tests.base import ApiServerUnittest
+from unittest import mock
+
 
 class TestContext(ApiServerUnittest):
 
@@ -205,8 +207,7 @@ class TestContext(ApiServerUnittest):
 
     def test_dbvalidate(self):
         dbvalidators = [
-            {"eq": ["$tablename", {"filter_fieldname": "$filter_fieldvalue"}, {"valide_fielddname": "$valide_fieldvalue"}]},
-            {"sum": ["$tablename", {"filter_fieldname": "$filter_fieldvalue"}, "sum_fieldname"]}
+            {"eq": ["env", "dbname",["$tablename"], {"filter_fieldname": "$filter_fieldvalue"}, {"valide_fielddname": "$valide_fieldvalue"}]}
         ]
 
         variables = [
@@ -216,4 +217,7 @@ class TestContext(ApiServerUnittest):
         ]
 
         self.context.update_context_variables(variables, "teststep")
-        self.context.dbvalidate(dbvalidators)
+        with mock.patch("builtins.print") as mocked_print:
+            self.context.dbvalidate(dbvalidators)
+            mocked_print.assert_called_with("{'env': 'env', 'dbname': 'dbname', 'function': 'eq', 'params': [['mytablename'], {'filter_fieldname': 200}, {'valide_fielddname': 400}]}")
+

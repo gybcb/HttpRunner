@@ -102,6 +102,4 @@ def alter_response_error(response):
     not_defined_variable
 
 def dbvalidate(**kwargs):
-    print(len(kwargs))
-
-    print(kwargs)
+    print(str(kwargs))

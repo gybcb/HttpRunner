@@ -5,6 +5,7 @@ from httprunner import exceptions, loader, runner
 from httprunner.utils import deep_update_dict
 from tests.api_server import HTTPBIN_SERVER
 from tests.base import ApiServerUnittest
+from unittest import mock
 
 
 class TestRunner(ApiServerUnittest):
@@ -295,8 +296,10 @@ class TestRunner(ApiServerUnittest):
                 {"eq": ["status_code", 200]}
             ],
             "dbvalidate": [
-                {"eq": ["act_ge_bytearray", {"id_": "272533"}, {"name_": "hist.var-multiInstanceCompletionUsers"}]}
+                {"eq": ["env", "dbname", ["act_ge_bytearray"], {"id_": "272533"}, {"name_": "hist.var-multiInstanceCompletionUsers"}]}
             ]
         }
 
-        self.test_runner.run_test(test)
+        with mock.patch("builtins.print") as mocked_print:
+            self.test_runner.run_test(test)
+            mocked_print.assert_called_with("{'env': 'env', 'dbname': 'dbname', 'function': 'eq', 'params': [['act_ge_bytearray'], {'id_': '272533'}, {'name_': 'hist.var-multiInstanceCompletionUsers'}]}")

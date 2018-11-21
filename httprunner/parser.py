@@ -202,11 +202,13 @@ def parse_validator(validator):
 def parse_dbvalidator(dbvalidator):
     """ 解析 dbvalidator
     @param dbvalidator
-    {"eq": ["tablename", {"filter_fieldname": "filter_fieldvalue"}, {"validate_fieldname": "validate_fieldvalue"}]}
+    {"eq": ["env","dbname", ["tablename"], {"filter_fieldname": "filter_fieldvalue"}, {"validate_fieldname": "validate_fieldvalue"}]}
     @return (dict) validator info
     {
+    "env": "env",
+    "dbname": "dbname",
     "function": "eq",
-    "params": ["tablename", {"filter_fieldname": "filter_fieldvalue"}, {"validate_fieldname": "validate_fieldvalue"}],
+    "params": [["tablename"], {"filter_fieldname": "filter_fieldvalue"}, {"validate_fieldname": "validate_fieldvalue"}],
     }
     """
     if not isinstance(dbvalidator, dict):
@@ -216,11 +218,13 @@ def parse_dbvalidator(dbvalidator):
         function = list(dbvalidator.keys())[0]
         params = dbvalidator[function]
 
-        if not isinstance(params, list) or len(params) < 1:
+        if not isinstance(params, list) or len(params) < 4:
             raise exceptions.ParamsError("invalid dbvalidator: {}".format(dbvalidator))
     return {
+        "env": params[0],
+        "dbname": params[1],
         "function": function,
-        "params": params
+        "params": params[2:]
     }
 
 def substitute_variables(content, variables_mapping):
