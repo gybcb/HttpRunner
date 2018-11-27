@@ -265,7 +265,7 @@ class Context(object):
             func(**kwargs)
             dbvalidate_msg += "\t==> pass"
             logger.log_debug(dbvalidate_msg)
-        except (AssertionError, TypeError) as err:
+        except (AssertionError, TypeError, LookupError, Exception) as err:
             dbvalidate_msg += "\t==> fail"
             logger.log_error(dbvalidate_msg)
             logger.log_error(" ".join(err.args))
